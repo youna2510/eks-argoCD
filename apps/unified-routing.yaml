@@ -1,0 +1,87 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: unified-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: unified-routes
+  namespace: istio-system
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - unified-gateway
+  http:
+    # Kiali
+    - match:
+        - uri:
+            prefix: "/kiali"
+      route:
+        - destination:
+            host: kiali.istio-system.svc.cluster.local
+            port:
+              number: 20001
+
+    # Grafana
+    - match:
+        - uri:
+            prefix: "/grafana"
+      route:
+        - destination:
+            host: grafana.istio-system.svc.cluster.local
+            port:
+              number: 3000
+
+    # ArgoCD
+    - match:
+        - uri:
+            prefix: "/argocd"
+      route:
+        - destination:
+            host: argocd-server.argocd.svc.cluster.local
+            port:
+              number: 80
+
+    # User API
+    - match:
+        - uri:
+            prefix: "/api/user"
+      route:
+        - destination:
+            host: user.default.svc.cluster.local
+            port:
+              number: 8080
+
+    # Profile API
+    - match:
+        - uri:
+            prefix: "/api/profile"
+      route:
+        - destination:
+            host: profile.default.svc.cluster.local
+            port:
+              number: 8081
+
+    # Frontend (루트 경로)
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: front.default.svc.cluster.local
+            port:
+              number: 80
+
