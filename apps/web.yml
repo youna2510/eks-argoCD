@@ -26,4 +26,4 @@ spec:
     spec:
       containers:
       - name: k8s-front-con
-        image: 61.254.18.30:5000/k8s/front:2
+        image: 324105357214.dkr.ecr.ap-northeast-2.amazonaws.com/front:2
