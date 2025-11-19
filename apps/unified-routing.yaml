@@ -84,4 +84,4 @@ spec:
         - destination:
             host: k8s-front-svc.default.svc.cluster.local
             port:
-              number: 3000
+              number: 80
