@@ -12,7 +12,7 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
+        - "http://a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -21,23 +21,11 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-    - "a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
+    - "*"
   gateways:
     - unified-gateway
   http:
-
-    # Frontend (루트 경로)
-    - match:
-        - uri:
-            prefix: "/"
-      route:
-        - destination:
-            host: front.default.svc.cluster.local
-            port:
-              number: 80
-
-
-    # Kiali
+    # Kiali (변경 없음)
     - match:
         - uri:
             prefix: "/kiali"
@@ -47,7 +35,7 @@ spec:
             port:
               number: 20001
 
-    # Grafana
+    # Grafana (변경 없음)
     - match:
         - uri:
             prefix: "/grafana"
@@ -57,7 +45,7 @@ spec:
             port:
               number: 3000
 
-    # ArgoCD
+    # ArgoCD (변경 없음)
     - match:
         - uri:
             prefix: "/argocd"
@@ -67,23 +55,33 @@ spec:
             port:
               number: 80
 
-    # User API
+    # User API (서비스 이름 수정: user -> user-api-svc)
     - match:
         - uri:
             prefix: "/api/user"
       route:
         - destination:
-            host: user.default.svc.cluster.local
+            host: user-api-svc.default.svc.cluster.local
             port:
               number: 8080
 
-    # Profile API
+    # Profile API (서비스 이름 수정: profile -> profile-api-svc)
     - match:
         - uri:
             prefix: "/api/profile"
       route:
         - destination:
-            host: profile.default.svc.cluster.local
+            host: profile-api-svc.default.svc.cluster.local
             port:
               number: 8081
 
+    # Frontend (루트 경로)
+    # 서비스 이름과 포트 수정: front:80 -> k8s-front-svc:3000
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: k8s-front-svc.default.svc.cluster.local
+            port:
+              number: 3000
