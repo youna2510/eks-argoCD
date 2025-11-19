@@ -12,7 +12,7 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "http://a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
+        - "a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
