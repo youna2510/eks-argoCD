@@ -12,7 +12,7 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "http://a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
+        - "a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -21,10 +21,22 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-    - "*"
+    - "a37b1eee27082425790c2340fbf6a03f-647572061.ap-northeast-2.elb.amazonaws.com"
   gateways:
     - unified-gateway
   http:
+
+    # Frontend (루트 경로)
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: front.default.svc.cluster.local
+            port:
+              number: 80
+
+
     # Kiali
     - match:
         - uri:
@@ -74,14 +86,4 @@ spec:
             host: profile.default.svc.cluster.local
             port:
               number: 8081
-
-    # Frontend (루트 경로)
-    - match:
-        - uri:
-            prefix: "/"
-      route:
-        - destination:
-            host: front.default.svc.cluster.local
-            port:
-              number: 80
 
